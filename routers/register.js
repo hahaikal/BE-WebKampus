@@ -1,50 +1,27 @@
-const { Op } = require('sequelize')
 const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcrypt')
-const sequelize = require('../dbConfig')
+const checkEmail = require('../utils/checkEmail')
 const Register = require('../models/register')
 
 router.post('/mahasiswa', async(req, res) => {
     const { name, email, NIM, password } = req.body
+    const Mahasiswa = Register ("NIM", "mahasiswa")
 
     try {
-        const existingEmail  = await Register.findOne({
-            where: {
-              email: {
-                [Op.eq]: email,
-              },
-            },
-        });
-        const existingNIM  = await Register.findOne({
-            where: {
-              NIM: {
-                [Op.eq]: NIM,
-              },
-            },
-        });
-
-        if (existingEmail ) {
-            return res.status(400).json({ message: 'Email sudah terdaftar' });
-        }
-        if (existingNIM ) {
-            return res.status(400).json({ message: 'NIM sudah terdaftar' });
-        }
+        if(await checkEmail(Mahasiswa, email,'NIM' , NIM, res)) return
 
         const bcryptPass = await bcrypt.hash(password, 10)
-        const mahasiswa = Register.build({
+        const mahasiswa = await Mahasiswa.create({
             name,
             email,
-            identifier: NIM,
+            NIM,
             password: bcryptPass,
         });
 
-        mahasiswa.tableName = 'mahasiswa';
-        mahasiswa.sequelize = sequelize;
-        await mahasiswa.save()
         res.status(200).json({
             metadata: 'berhasil register',
-            data: user
+            data: mahasiswa
         })
 
     } catch(e) {
@@ -54,41 +31,22 @@ router.post('/mahasiswa', async(req, res) => {
 
 router.post('/dosen', async(req, res) => {
     const { name, email, NIDN, password } = req.body
+    const Dosen = Register ("NIDN", "dosen")
 
     try {
-        const existingEmail  = await Register.findOne({
-            where: {
-              email: {
-                [Op.eq]: email,
-              },
-            },
-        });
-        const existingNIDN  = await Register.findOne({
-            where: {
-              NIDN: {
-                [Op.eq]: NIDN,
-              },
-            },
-        });
-
-        if (existingEmail ) {
-            return res.status(400).json({ message: 'Email sudah terdaftar' });
-        }
-        if (existingNIDN ) {
-            return res.status(400).json({ message: 'NIDN sudah terdaftar' });
-        }
+        if(await checkEmail(Dosen, email, 'NIDN', NIDN, res)) return
 
         const bcryptPass = await bcrypt.hash(password, 10)
-        const user = await Register.create({
+        const dosen = await Dosen.create({
             name,
-            email, 
+            email,
             NIDN,
-            password: bcryptPass
-        })
+            password: bcryptPass,
+        });
 
         res.status(200).json({
             metadata: 'berhasil register',
-            data: user
+            data: dosen
         })
 
     } catch(e) {

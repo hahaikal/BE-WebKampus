@@ -9,11 +9,34 @@ router.use(session({
     saveUninitialized: true
 }))
 
-router.post('/', async (req, res) => {
+router.post('/mahasiswa', async (req, res) => {
     const { NIM, password } = req.body
 
     try {
-        const chec = await passwordCheck(NIM, password)
+        const chec = await passwordCheck("NIM", NIM, password)
+        if(chec.validatePassword) {
+            res.status(200).json({
+                metadata: 'Login Success',
+                data: chec.user
+            })   
+
+            req.session.user = chec
+
+        } else {
+            res.status(400).json({
+                metadata: 'Username atau password salah'
+            })
+        }
+    } catch(e) {
+        res.status(500).send(e.message)
+    }
+})
+
+router.post('/dosen', async (req, res) => {
+    const { NIDN, password } = req.body
+
+    try {
+        const chec = await passwordCheck("NIDN", NIDN, password)
         if(chec.validatePassword) {
             res.status(200).json({
                 metadata: 'Login Success',
