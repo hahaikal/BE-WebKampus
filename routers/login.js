@@ -13,19 +13,13 @@ router.post('/mahasiswa', async (req, res) => {
     const { NIM, password } = req.body
 
     try {
-        const chec = await passwordCheck("NIM", NIM, password)
-        if(chec.validatePassword) {
+        const user = await passwordCheck("NIM", "mahasiswa", NIM, password, res)
+        if(user) {
             res.status(200).json({
                 metadata: 'Login Success',
-                data: chec.user
+                data: user
             })   
-
-            req.session.user = chec
-
-        } else {
-            res.status(400).json({
-                metadata: 'Username atau password salah'
-            })
+            req.session.user = user
         }
     } catch(e) {
         res.status(500).send(e.message)
@@ -36,19 +30,13 @@ router.post('/dosen', async (req, res) => {
     const { NIDN, password } = req.body
 
     try {
-        const chec = await passwordCheck("NIDN", NIDN, password)
-        if(chec.validatePassword) {
+        const user = await passwordCheck("NIDN", "dosen", NIDN, password, res)
+        if(user) {
             res.status(200).json({
                 metadata: 'Login Success',
-                data: chec.user
+                data: user
             })   
-
-            req.session.user = chec
-
-        } else {
-            res.status(400).json({
-                metadata: 'Username atau password salah'
-            })
+            req.session.user = user
         }
     } catch(e) {
         res.status(500).send(e.message)

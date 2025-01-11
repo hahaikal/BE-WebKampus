@@ -10,7 +10,6 @@ const CreateRegisterModel = (identifier, tableName) => {
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     email: {
       type: DataTypes.STRING,
@@ -28,6 +27,21 @@ const CreateRegisterModel = (identifier, tableName) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    bio: {
+      type: DataTypes.TEXT,
+    },
+    telepon : {
+      type: DataTypes.STRING,
+    },
+    fakultas: {
+      type: DataTypes.STRING,
+    },
+    prodi: {
+      type: DataTypes.STRING,
+    },
+    fotoURL: {
+      type: DataTypes.STRING,
     },
     createdAt: {
       type: DataTypes.DATE,
