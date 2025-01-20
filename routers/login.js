@@ -6,10 +6,6 @@ router.post('/', async (req, res) => {
   try {
     const { nim, nidn, password } = req.body;
 
-    if ((!nim && !nidn) || !password) {
-      return res.status(400).json({ success: false, message: 'NIM atau NIDN dan password harus diisi' });
-    }
-
     const { success, message, user } = await passwordCheck(nim, nidn, password);
 
     if (!success) {

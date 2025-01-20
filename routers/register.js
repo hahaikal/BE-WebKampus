@@ -19,19 +19,23 @@ router.post('/mahasiswa', async (req, res) => {
         if (nimExists) {
             return res.status(400).json({ error: 'NIM is already registered.' });
         }
-        if(!password === confirmPassword){
+
+        if(password === confirmPassword){
+            const hashPassword = await bcrypt.hash(password, 10);
+            const user = await User.create({
+                name,
+                email,
+                password: hashPassword,
+                nim,
+                role: 'mahasiswa'
+            });
+            return res.status(201).json({
+                user,
+                metadata : 'Berhasil Mendaftar'
+            });
+        } else {
             return res.status(400).json({ error: 'Password and Confirm Password must be the same'})
         }
-
-        const hashPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({
-            name,
-            email,
-            password: hashPassword,
-            nim,
-            role: 'mahasiswa'
-        });
-        res.status(201).json(user);
 
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -62,11 +66,13 @@ router.post('/dosen', async (req, res) => {
             name,
             email,
             password: hashPassword,
-            nim: null,
             nidn,
             role: 'dosen'
         });
-        res.status(201).json(user);
+        return res.status(201).json({
+            user,
+            metadata : 'Berhasil Mendaftar'
+        });
 
     } catch (error) {
         res.status(400).json({ error: error.message });
